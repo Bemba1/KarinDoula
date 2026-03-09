@@ -162,3 +162,7 @@ inno_bundle:
     - french
     - german
   admin: false
+
+  dependency_overrides:
+    build_tool:
+      path: rust_builder/cargokit/build_tool
