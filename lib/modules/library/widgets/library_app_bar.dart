@@ -18,6 +18,7 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
+import 'package:go_router/go_router.dart';
 
 /// AppBar for the library screen.
 ///
@@ -172,6 +173,15 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
             color: isNotFiltering ? null : Colors.yellow,
           ),
         ),
+        //ajout//
+        IconButton(
+          splashRadius: 20,
+          icon: const Icon(Icons.cloud),
+          onPressed: () {
+            context.push("/supabaseComics");
+          },
+        ),
+        //
         PopupMenuButton(
           popUpAnimationStyle: popupAnimationStyle,
           itemBuilder: (context) {

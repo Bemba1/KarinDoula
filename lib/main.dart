@@ -1,3 +1,4 @@
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -48,6 +49,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:mangayomi/services/supabase_service.dart';
+import 'modules/browse/supabase_comics_page.dart';
 
 late Isar isar;
 DiscordRPC? discordRpc;
@@ -101,9 +105,28 @@ void main(List<String> args) async {
       }
       final storage = StorageProvider();
       await storage.requestPermission();
+
+      /// INITIALISATION SUPABASE
+      await Supabase.initialize(
+        url: 'https://hqihxgwjruhmaedznbca.supabase.co',
+        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhxaWh4Z3dqcnVobWFlZHpuYmNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTg4NTAsImV4cCI6MjA4ODYzNDg1MH0.bNdUEiBFfHXx5HYg-irOImv5O05CgXvKUMHKhm21mWk',
+      );
+
       isar = await storage.initDB(null, inspector: kDebugMode);
+      //ajout
+      //final supabaseTest = SupabaseService();
+      //final comics = await supabaseTest.getComics();
+      //print("COMICS FROM SUPABASE:");
+      //print(comics);
+      //
       runApp(ProviderScope(child: MyApp(), retry: (retryCount, error) => null));
       unawaited(_postLaunchInit(storage));
+      //ajout
+      final supabaseTest = SupabaseService();
+      final comics = await supabaseTest.getComics();
+      print("COMICS FROM SUPABASE:");
+      print(comics);
+      //
     },
     (Object error, StackTrace stack) {
       AppLogger.log(
@@ -462,3 +485,5 @@ class AllowScrollBehavior extends MaterialScrollBehavior {
     PointerDeviceKind.unknown,
   };
 }
+
+

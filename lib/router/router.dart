@@ -60,7 +60,10 @@ import 'package:mangayomi/modules/more/settings/settings_screen.dart';
 import 'package:mangayomi/modules/more/settings/security/security_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mangayomi/modules/browse/supabase_comics_page.dart';
 part 'router.g.dart';
+
+
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 @riverpod
@@ -74,7 +77,8 @@ GoRouter router(Ref ref) {
 
   return GoRouter(
     observers: [BotToastNavigatorObserver()],
-    initialLocation: initLocation,
+    //initialLocation: initLocation,
+    initialLocation: "/supabaseComics",
     debugLogDiagnostics: kDebugMode,
     refreshListenable: router,
     routes: router._routes,
@@ -147,6 +151,12 @@ class RouterNotifier extends ChangeNotifier {
         _genericRoute(name: "history", child: const HistoryScreen()),
         _genericRoute(name: "updates", child: const UpdatesScreen()),
         _genericRoute(name: "browse", child: const BrowseScreen()),
+        //ajout//
+        _genericRoute(
+          name: "supabaseComics",
+          child: const SupabaseComicsPage(),
+        ),
+        ////
         _genericRoute(name: "more", child: const MoreScreen()),
       ],
     ),
