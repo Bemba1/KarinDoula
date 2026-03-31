@@ -28,6 +28,8 @@ import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:marquee/marquee.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:mangayomi/modules/browse/chapters_page.dart';
 
 class MangaHomeScreen extends ConsumerStatefulWidget {
   final Source source;
@@ -53,6 +55,42 @@ class TypeMangaSelector {
 }
 
 class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
+  //Ajout//
+  Future<List<dynamic>> getComics() async {
+    final response = await Supabase.instance.client
+        .from('comics')
+        .select();
+
+    return response;
+  }
+
+  Widget _buildComicItem(dynamic comic) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChaptersPage(
+              comicId: comic['id'],
+              title: comic['title'],
+            ),
+          ),
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: AspectRatio(
+          aspectRatio: 9 / 16,
+          child: Image.network(
+            comic['cover_url'],
+            fit: BoxFit.cover,
+            width: double.infinity,
+          ),
+        ),
+      ),
+    );
+  }
+  //
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
   int _fullDataLength = 50;
@@ -135,6 +173,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   late final filterList = isLocal ? [] : getFilterList(source: source);
   @override
   Widget build(BuildContext context) {
+    //ajout//
+    final mangaState = _getManga;
+    //
     if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
         _isFiltering) {
       _getManga = ref.watch(
@@ -445,9 +486,12 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           ),
         ),
       ),
-      body: _getManga!.isLoading
-          ? const ProgressCenter()
-          : _getManga!.when(
+      //body: _getManga!.isLoading
+          //? const ProgressCenter()
+          //: _getManga!.when(
+      /*body: mangaState == null
+          ? const Center(child: CircularProgressIndicator())
+          : mangaState.when(
               data: (data) {
                 if (_hasNextPage) {
                   if (!data!.hasNextPage) {
@@ -687,7 +731,40 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 ],
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
+            ),*/
+      body: FutureBuilder(
+        future: getComics(),
+        builder: (context, snapshot) {
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text("Erreur: ${snapshot.error}"));
+          }
+
+          final comics = snapshot.data as List;
+
+          if (comics.isEmpty) {
+            return const Center(child: Text("Aucun manga"));
+          }
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(8),
+            itemCount: comics.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3, // nombre de colonnes
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+              childAspectRatio: 9 / 16,
             ),
+            itemBuilder: (context, index) {
+              return _buildComicItem(comics[index]);
+            },
+          );
+        },
+      ),
     );
   }
 }

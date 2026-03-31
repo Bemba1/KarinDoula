@@ -186,6 +186,7 @@ class FullScreenReaderState extends _$FullScreenReaderState {
 @riverpod
 class NavigationOrderState extends _$NavigationOrderState {
   final items = [
+    "/home",
     '/MangaLibrary',
     '/AnimeLibrary',
     '/NovelLibrary',

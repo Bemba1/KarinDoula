@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'chapters_page.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 
 class SupabaseComicsPage extends StatefulWidget {
   const SupabaseComicsPage({super.key});
@@ -11,12 +13,46 @@ class SupabaseComicsPage extends StatefulWidget {
 
 class _SupabaseComicsPageState extends State<SupabaseComicsPage> {
 
+  //ajout
+  Widget _buildComicItem(dynamic comic) {
+    return GestureDetector(
+      onTap: () {
+        context.push(
+          "/chapters",
+          extra: {
+            "id": comic['id'],
+            "title": comic['title'],
+          },
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: AspectRatio(
+          aspectRatio: 9 / 16,
+          child: CachedNetworkImage(
+            imageUrl: comic['cover_url'],
+            fit: BoxFit.cover,
+            width: double.infinity,
+
+            placeholder: (context, url) =>
+            const Center(child: CircularProgressIndicator()),
+
+            errorWidget: (context, url, error) =>
+            const Icon(Icons.error),
+          ),
+        ),
+      ),
+    );
+  }
+  //
+
   Future<List<dynamic>> getComics() async {
     final response = await Supabase.instance.client
         .from('comics')
         .select();
 
     return response;
+
   }
 
   @override
@@ -35,37 +71,19 @@ class _SupabaseComicsPageState extends State<SupabaseComicsPage> {
 
           final comics = snapshot.data as List;
 
-          return ListView.builder(
+          return GridView.builder(
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 80),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3, // 🔥 3 colonnes
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+              childAspectRatio: 9 / 16, // 🔥 ratio manga
+            ),
             itemCount: comics.length,
             itemBuilder: (context, index) {
-
               final comic = comics[index];
 
-              return ListTile(
-                leading: Image.network(
-                  comic['cover_url'],
-                  width: 50,
-                  height: 80,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    print("Erreur image: ${comic['cover_url']}");
-                    return const Icon(Icons.error);
-                  },
-                ),
-                title: Text(comic['title']),
-                subtitle: Text(comic['description'] ?? ''),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChaptersPage(
-                        comicId: comic['id'],
-                        title: comic['title'],
-                      ),
-                    ),
-                  );
-                },
-              );
+              return _buildComicItem(comic);
             },
           );
         },

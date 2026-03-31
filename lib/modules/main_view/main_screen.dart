@@ -195,9 +195,15 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                         (nav) => libLocationRegex.hasMatch(nav),
                       ),
                     ].where((nav) => !hideItems.contains(nav)).toList()
-                  : navigationOrder
+                  : [
+                      "/home",
+                      "/oneShot",
+                      "/MangaLibrary",
+                      "/more",
+                    ]; /*navigationOrder
                         .where((nav) => !hideItems.contains(nav))
-                        .toList();
+                        .toList();*/
+
 
               if (mergeLibraryNavMobile && !context.isTablet && !isLibSwitch) {
                 dest = dest
@@ -307,6 +313,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     return location == '/mangaReaderView' ||
         location == '/animePlayerView' ||
         location == '/novelReaderView';
+        location == '/pagesReader';
   }
 
   List<NavigationRailDestination> _buildNavigationWidgetsDesktop(
@@ -433,6 +440,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     WidgetRef ref,
     List<String> dest,
     BuildContext context,
+
   ) {
     final cacheKey = dest.join(',');
     if (_mobileDestinationsCache.containsKey(cacheKey)) {
@@ -444,6 +452,26 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       dest.length,
       const SizedBox.shrink(),
     );
+
+    // Ajout//
+    if (dest.contains("/home")) {
+      destinations[dest.indexOf("/home")] = NavigationDestination(
+        selectedIcon: const Icon(Icons.home),
+        icon: const Icon(Icons.home_outlined),
+        label: "Home",
+      );
+    }
+    //
+
+    //Ajout
+    if (dest.contains("/oneShot")) {
+      destinations[dest.indexOf("/oneShot")] = NavigationDestination(
+        selectedIcon: const Icon(Icons.flash_on),
+        icon: const Icon(Icons.flash_on_outlined),
+        label: "One Shot",
+      );
+    }
+    //
 
     if (dest.contains("_disableLibSwitch")) {
       destinations[dest.indexOf("_disableLibSwitch")] = NavigationDestination(
@@ -678,6 +706,7 @@ class _TabletLayout extends StatelessWidget {
     if (isLongPressed) return 0;
 
     const validLocations = {
+      '/home',
       '/MangaLibrary',
       '/AnimeLibrary',
       '/NovelLibrary',
@@ -748,6 +777,7 @@ class _MobileBottomNavigation extends StatelessWidget {
     if (isLongPressed) return 0;
 
     const validLocations = {
+      '/home',
       '/MangaLibrary',
       '/AnimeLibrary',
       '/NovelLibrary',

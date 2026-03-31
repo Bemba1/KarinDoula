@@ -18,6 +18,7 @@ import 'package:mangayomi/utils/language.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 final navigationItems = {
+  "/home": "Home",
   "/MangaLibrary": "Manga",
   "/AnimeLibrary": "Anime",
   "/NovelLibrary": "Novel",

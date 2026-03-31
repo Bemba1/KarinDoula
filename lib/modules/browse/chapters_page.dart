@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'pages_reader_page.dart';
+import 'package:go_router/go_router.dart';
 
 class ChaptersPage extends StatefulWidget {
   final dynamic comicId;
@@ -54,13 +54,10 @@ class _ChaptersPageState extends State<ChaptersPage> {
                 subtitle: Text(chapter['title'] ?? ""),
 
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PagesReaderPage(
-                        chapterId: chapter['id'],
-                      ),
-                    ),
+                  //Ajout
+                  context.push(
+                    "/reader",
+                    extra: chapter['id'],
                   );
                 },
               );

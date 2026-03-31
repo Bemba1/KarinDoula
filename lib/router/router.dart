@@ -61,7 +61,11 @@ import 'package:mangayomi/modules/more/settings/security/security_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mangayomi/modules/browse/supabase_comics_page.dart';
+import 'package:mangayomi/modules/browse/pages_reader_page.dart';
+import 'package:mangayomi/modules/browse/chapters_page.dart';
+import 'package:mangayomi/modules/browse/one_shot_page.dart';
 part 'router.g.dart';
+
 
 
 
@@ -153,10 +157,16 @@ class RouterNotifier extends ChangeNotifier {
         _genericRoute(name: "browse", child: const BrowseScreen()),
         //ajout//
         _genericRoute(
-          name: "supabaseComics",
+          name: "home",
           child: const SupabaseComicsPage(),
         ),
         ////
+        //Ajout
+        _genericRoute(
+          name: "oneShot",
+          child: const OneShotPage(),
+        ),
+        //
         _genericRoute(name: "more", child: const MoreScreen()),
       ],
     ),
@@ -172,6 +182,32 @@ class RouterNotifier extends ChangeNotifier {
       name: "mangaReaderView",
       builder: (id) => MangaReaderView(chapterId: id),
     ),
+    //Ajout
+    GoRoute(
+      path: "/reader",
+      builder: (context, state) {
+        final chapterId = state.extra as String;
+
+        return PagesReaderPage(
+          chapterId: chapterId,
+        );
+      },
+    ),
+    //
+
+    //Ajout peut etre temporaire
+    GoRoute(
+      path: "/chapters",
+      builder: (context, state) {
+        final data = state.extra as Map<String, dynamic>;
+
+        return ChaptersPage(
+          comicId: data["id"],
+          title: data["title"],
+        );
+      },
+    ),
+    //
     _genericRoute<int>(
       name: "animePlayerView",
       builder: (id) => AnimePlayerView(episodeId: id),
@@ -180,6 +216,7 @@ class RouterNotifier extends ChangeNotifier {
       name: "novelReaderView",
       builder: (id) => NovelReaderView(chapterId: id),
     ),
+
     _genericRoute<ItemType>(
       name: "ExtensionLang",
       builder: (itemType) => ExtensionsLang(itemType: itemType),
